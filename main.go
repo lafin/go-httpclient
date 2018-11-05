@@ -29,6 +29,27 @@ func GetData(url string) ([]byte, error) {
 	return body, nil
 }
 
+// CopyFile - copy file by http
+func CopyFile(from, to string) ([]byte, error) {
+	client := Client()
+	src, err := client.Get(from)
+	if err != nil {
+		return nil, err
+	}
+	defer src.Body.Close()
+
+	dest, err := client.Post(to, "image/jpeg", src.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer dest.Body.Close()
+	body, err := ioutil.ReadAll(dest.Body)
+	if err != nil {
+		return nil, err
+	}
+	return body, nil
+}
+
 // Client - get instance of http client
 func Client() *http.Client {
 	once.Do(func() {
